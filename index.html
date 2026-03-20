@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVM Ultra Sniper v2.0</title>
+    <title>Polygon Sniper v2.1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background: #020617; color: #f8fafc; padding: 20px; }
         .container { max-width: 900px; margin: auto; background: #0f172a; padding: 30px; border-radius: 12px; border: 1px solid #1e293b; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .section { background: #1e293b; padding: 15px; border-radius: 8px; border-bottom: 4px solid #38bdf8; margin-bottom: 20px; }
         h2 { text-align: center; color: #38bdf8; text-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
         label { display: block; font-size: 11px; margin: 8px 0; color: #94a3b8; font-weight: bold; }
@@ -19,54 +18,45 @@
         .btn-attack { background: #ef4444; color: #fff; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
         #log { margin-top: 20px; background: #000; color: #4ade80; padding: 15px; border-radius: 6px; height: 250px; overflow-y: auto; font-family: 'Fira Code', monospace; font-size: 12px; border: 1px solid #334155; line-height: 1.6; }
-        .status-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; background: #334155; color: #38bdf8; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>⚡ EVM ULTRA SNIPER v2.0</h2>
-    <div style="text-align: center;"><span class="status-badge" id="netStatus">Network: Not Connected</span></div>
+    <h2>⚡ POLYGON SNIPER v2.1</h2>
 
     <div class="section">
-        <label>RPC URL (Ethereum/Base/Polygon/BSC)</label>
-        <input type="text" id="rpcUrl" value="https://eth-mainnet.g.alchemy.com/v2/qsRB4lImGHF_FyQ-B-Xto" onchange="checkNetwork()">
+        <label>Polygon RPC URL (যেমন QuickNode/Alchemy)</label>
+        <input type="text" id="rpcUrl" placeholder="https://polygon-mainnet.g.alchemy.com/v2/your-api-key">
         <label>Master Private Key (Main Funding Wallet)</label>
-        <input type="password" id="masterKey" placeholder="0x...">
+        <input type="password" id="masterKey" placeholder="0xabc123...">
     </div>
 
-    <div class="grid">
-        <div class="section">
-            <h3>1. Multi-Wallet Gen</h3>
-            <input type="number" id="walletCount" value="10">
-            <button class="btn-gen" onclick="generateWallets()">Generate & Download Keys</button>
-        </div>
-        <div class="section" style="border-bottom-color: #10b981;">
-            <h3>2. Instant Funding</h3>
-            <label>Amount (Total per wallet including Gas)</label>
-            <input type="text" id="fundAmount" value="0.01" placeholder="e.g. 0.05">
-            <button class="btn-fund" onclick="distributeFunds()">Distribute to All Wallets</button>
-        </div>
+    <div class="section">
+        <h3>1. Generate Wallets</h3>
+        <input type="number" id="walletCount" value="10">
+        <button class="btn-gen" onclick="generateWallets()">Generate & Export</button>
+    </div>
+
+    <div class="section" style="border-bottom-color: #10b981;">
+        <h3>2. Distribute MATIC (Fund Wallets)</h3>
+        <label>Amount of MATIC total per wallet</label>
+        <input type="text" id="fundAmount" value="1" placeholder="e.g. 1 MATIC">
+        <button class="btn-fund" onclick="distributeFunds()">Distribute to All Wallets</button>
     </div>
 
     <div class="section" style="border-bottom-color: #ef4444;">
-        <h3>3. Sniper Settings (Smart Mint)</h3>
-        <div class="grid">
-            <div>
-                <label>Contract Address</label>
-                <input type="text" id="contractAddr" placeholder="0x...">
-                <label>Mint Price (0 for Free Mint)</label>
-                <input type="text" id="price" value="0" placeholder="0.00">
-            </div>
-            <div>
-                <label>Target Time (YYYY-MM-DD HH:MM:SS)</label>
-                <input type="text" id="mintTime" placeholder="2026-03-20 22:00:00">
-                <button class="btn-attack" onclick="scheduleMint()">ARM & ATTACK</button>
-            </div>
-        </div>
+        <h3>3. Sniper Settings (Free Mint Supported)</h3>
+        <label>Contract Address</label>
+        <input type="text" id="contractAddr" placeholder="0x...">
+        <label>Mint Price (0 for Free Mint)</label>
+        <input type="text" id="price" value="0">
+        <label>Target Time (YYYY-MM-DD HH:MM:SS)</label>
+        <input type="text" id="mintTime" placeholder="2026-03-20 22:00:00">
+        <button class="btn-attack" onclick="scheduleMint()">ARM & ATTACK</button>
     </div>
 
-    <div id="log">>> Sniper Engine v2.0 Initialized...</div>
+    <div id="log">>> Sniper Engine v2.1 Ready...</div>
 </div>
 
 <script>
@@ -79,14 +69,18 @@
         logDiv.scrollTop = logDiv.scrollHeight;
     }
 
-    async function checkNetwork() {
-        try {
-            provider = new ethers.providers.JsonRpcProvider(document.getElementById('rpcUrl').value);
-            const net = await provider.getNetwork();
-            document.getElementById('netStatus').innerText = `Network: ${net.name} (ID: ${net.chainId})`;
-            log(`Connected to Chain ID: ${net.chainId}`);
-        } catch (e) { log("Connection Error!", "#ef4444"); }
-    }
+    // RPC URL সেট হলে কানেক্ট করবে
+    document.getElementById('rpcUrl').addEventListener('change', (e) => {
+        const url = e.target.value;
+        if(url) {
+            try {
+                provider = new ethers.providers.JsonRpcProvider(url);
+                log("RPC Provider connected.");
+            } catch (e) {
+                log("Connection Error: Invalid RPC URL.", "#ef4444");
+            }
+        }
+    });
 
     async function generateWallets() {
         const count = document.getElementById('walletCount').value;
@@ -97,7 +91,7 @@
             wallets.push({ address: w.address, privateKey: w.privateKey });
             exportText += `${w.address},${w.privateKey}\n`;
         }
-        log(`Success! Generated ${count} wallets. Exporting file...`);
+        log(`Generated ${count} child wallets.`);
         const blob = new Blob([exportText], { type: 'text/csv' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
@@ -108,20 +102,22 @@
     async function distributeFunds() {
         const masterKey = document.getElementById('masterKey').value;
         const amount = document.getElementById('fundAmount').value;
-        if(!masterKey || wallets.length === 0) return alert("Setup Master Key and Wallets!");
+        if(!masterKey || wallets.length === 0 || !provider) return alert("Please check: RPC URL, Master Key, and Wallets are ready.");
         
         const masterWallet = new ethers.Wallet(masterKey, provider);
-        log("🚀 Starting Bulk Funding...");
+        log(`🚀 Starting Bulk Funding... (${amount} MATIC per wallet)`);
         for(let w of wallets) {
             try {
                 const tx = await masterWallet.sendTransaction({
                     to: w.address,
                     value: ethers.utils.parseEther(amount)
                 });
-                log(`Funded ${w.address.substring(0,6)}.. Tx: ${tx.hash.substring(0,10)}`);
-            } catch (e) { log(`Fund Error: ${e.message}`, "#ef4444"); }
+                log(`Funded ${w.address.substring(0,8)} | Tx: ${tx.hash.substring(0,12)}`);
+            } catch (e) {
+                log(`Failed to fund ${w.address}: ${e.message}`, "#ef4444");
+            }
         }
-        log("✅ Distribution Finished.");
+        log("✅ Funding Complete!");
     }
 
     async function scheduleMint() {
@@ -130,40 +126,38 @@
         const price = document.getElementById('price').value;
         const targetTime = new Date(targetTimeStr).getTime();
 
-        log(`Sniper Armed for ${targetTimeStr}. Monitoring Block...`, "#f59e0b");
+        log(`Sniper Armed for ${targetTimeStr}.`, "#f59e0b");
 
         const sniperInterval = setInterval(async () => {
             if (Date.now() >= targetTime) {
                 clearInterval(sniperInterval);
                 log("🔥 TARGET TIME! LAUNCHING MINT...", "#ef4444");
 
-                // Smart Gas Calculation (Current + 20%)
+                // পলিগনের জন্য সঠিক গ্যাস প্রাইস ক্যালকুলেট করা
                 const feeData = await provider.getFeeData();
-                const gasPrice = feeData.gasPrice.mul(120).div(100); // 20% Extra
-                
-                // ABI - Common Mint Functions
+                const gasPrice = feeData.gasPrice.mul(120).div(100); // 20% Extra Priority
+
+                // কমন মিন্ট ফাংশন ABI
                 const abi = ["function mint(uint256 quantity) public payable", "function claim(uint256 amount) public payable"];
 
                 wallets.forEach(async (w) => {
                     try {
                         const signer = new ethers.Wallet(w.privateKey, provider);
                         const contract = new ethers.Contract(contractAddr, abi, signer);
-                        
-                        // Free Mint Logic: If price is 0, value = 0
-                        const val = (parseFloat(price) > 0) ? ethers.utils.parseEther(price) : 0;
+                        const val = (parseFloat(price) > 0) ? ethers.utils.parseEther(price) : 0; // Free Mint সাপোর্ট
 
                         const tx = await contract.mint(1, {
                             value: val,
-                            gasLimit: 300000,
+                            gasLimit: 300000, // পলিগনের জন্য বড় গ্যাস লিমিট
                             gasPrice: gasPrice
                         });
                         log(`✅ SUCCESS! Wallet: ${w.address.substring(0,6)} | Tx: ${tx.hash}`);
                     } catch (e) {
-                        log(`❌ Failed: ${w.address.substring(0,6)} | Reverting...`, "#ef4444");
+                        log(`❌ Failed: ${w.address.substring(0,6)} | ${e.reason || e.message}`, "#ef4444");
                     }
                 });
             }
-        }, 30); // 30ms for extreme precision
+        }, 30); // 30ms for precision
     }
 </script>
 </body>
