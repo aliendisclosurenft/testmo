@@ -3,72 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVM Ultra Sniper v3.0 - Polygon Ready</title>
+    <title>EVM Sniper v5.0 - Ultimate Edition</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background: #020617; color: #f8fafc; padding: 20px; }
-        .container { max-width: 950px; margin: auto; background: #0f172a; padding: 30px; border-radius: 12px; border: 1px solid #1e293b; box-shadow: 0 0 40px rgba(0,0,0,0.7); }
+        :root { --primary: #8247e5; --bg: #020617; --card: #0f172a; --text: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
+        .container { max-width: 950px; margin: auto; background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid #1e293b; box-shadow: 0 0 50px rgba(130, 71, 229, 0.2); }
+        h2 { text-align: center; color: var(--primary); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 30px; }
+        .section { background: #1e293b; padding: 20px; border-radius: 10px; border-top: 5px solid var(--primary); margin-bottom: 25px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .section { background: #1e293b; padding: 15px; border-radius: 8px; border-top: 4px solid #38bdf8; margin-bottom: 20px; }
-        h2 { text-align: center; color: #8247e5; text-transform: uppercase; letter-spacing: 2px; } /* Polygon Purple */
-        label { display: block; font-size: 11px; margin: 8px 0; color: #94a3b8; font-weight: bold; }
-        input, textarea { width: 92%; padding: 12px; border-radius: 6px; border: 1px solid #334155; background: #020617; color: #38bdf8; outline: none; }
-        textarea { height: 80px; font-size: 10px; font-family: monospace; }
-        button { width: 100%; padding: 14px; margin-top: 15px; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .btn-gen { background: #38bdf8; color: #020617; }
-        .btn-fund { background: #22c55e; color: #fff; }
-        .btn-attack { background: #ef4444; color: #fff; font-size: 16px; border: 2px solid white; }
-        #log { margin-top: 20px; background: #000; color: #4ade80; padding: 15px; border-radius: 6px; height: 250px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 12px; border: 1px solid #334155; }
-        .badge { background: #8247e5; padding: 4px 10px; border-radius: 20px; font-size: 10px; margin-left: 10px; }
+        label { display: block; font-size: 12px; margin-bottom: 8px; color: #94a3b8; font-weight: bold; }
+        input, textarea, select { width: 95%; padding: 12px; border-radius: 6px; border: 1px solid #334155; background: #020617; color: #38bdf8; outline: none; margin-bottom: 15px; font-family: 'Fira Code', monospace; }
+        button { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; margin-top: 10px; font-size: 14px; }
+        .btn-action { background: var(--primary); color: white; }
+        .btn-fund { background: #10b981; color: white; }
+        .btn-attack { background: #ef4444; color: white; font-size: 18px; border: 2px solid #fff; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        #log { background: #000; color: #4ade80; padding: 20px; border-radius: 8px; height: 300px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 13px; border: 1px solid #334155; line-height: 1.5; }
+        .info-box { font-size: 11px; color: #f59e0b; margin-top: -10px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>⚡ EVM SNIPER v3.0 <span class="badge">POLYGON OPTIMIZED</span></h2>
-
-    <div class="section">
-        <label>RPC URL (পলিগনের জন্য QuickNode/Alchemy ব্যবহার করুন)</label>
-        <input type="text" id="rpcUrl" value="https://polygon-mainnet.g.alchemy.com/v2/your-api-key" placeholder="Enter RPC URL">
-        <label>Master Private Key (যেখান থেকে ফি পাঠাবেন)</label>
-        <input type="password" id="masterKey" placeholder="0x...">
-    </div>
+    <h2>⚡ ULTRA SNIPER v5.0 ⚡</h2>
 
     <div class="grid">
         <div class="section">
-            <h3>1. Wallets Management</h3>
-            <button class="btn-gen" onclick="generateWallets()">Generate New Wallets</button>
-            <label>OR Import Private Keys (One per line)</label>
-            <textarea id="importKeys" placeholder="0xabc...&#10;0xdef..."></textarea>
-            <button class="btn-gen" style="background: #64748b;" onclick="importWallets()">Load Imported Wallets</button>
+            <h3>1. Network & Master</h3>
+            <label>RPC URL (পাবলিক পলিগন আরপিসি দেওয়া আছে)</label>
+            <input type="text" id="rpcUrl" value="https://polygon-rpc.com">
+            <label>Master Private Key (Funding Wallet)</label>
+            <input type="password" id="masterKey" placeholder="0x...">
+            <div class="info-box">এই ওয়ালেট থেকে ফি পাঠানো হবে।</div>
         </div>
+        <div class="section">
+            <h3>2. Child Wallets</h3>
+            <label>Import Private Keys (One per line)</label>
+            <textarea id="importKeys" placeholder="Paste keys here..."></textarea>
+            <button class="btn-action" onclick="loadWallets()">Load & Sync Wallets</button>
+        </div>
+    </div>
 
-        <div class="section" style="border-top-color: #22c55e;">
-            <h3>2. Bulk Funding</h3>
-            <label>Amount (MATIC per wallet)</label>
+    <div class="grid">
+        <div class="section" style="border-top-color: #10b981;">
+            <h3>3. Gas & Distribution</h3>
+            <label>Priority Fee Increase (%)</label>
+            <select id="gasBoost">
+                <option value="20">20% (Standard Fast)</option>
+                <option value="50">50% (Very Fast)</option>
+                <option value="100">100% (Instant/Gas War)</option>
+            </select>
+            <label>Amount to Fund (MATIC)</label>
             <input type="text" id="fundAmount" value="0.5">
-            <button class="btn-fund" onclick="distributeFunds()">Distribute MATIC Now</button>
+            <button class="btn-fund" onclick="distributeFunds()">Distribute Funds Now</button>
+        </div>
+        <div class="section" style="border-top-color: #ef4444;">
+            <h3>4. Sniper Engine</h3>
+            <label>NFT Contract Address</label>
+            <input type="text" id="contractAddr" placeholder="0x...">
+            <label>Price (0 for Free Mint)</label>
+            <input type="text" id="price" value="0">
+            <label>Target Time (YYYY-MM-DD HH:MM:SS)</label>
+            <input type="text" id="mintTime" placeholder="2026-03-20 23:30:00">
+            <button class="btn-attack" onclick="startAttack()">🔥 ARM & ATTACK NOW</button>
         </div>
     </div>
 
-    <div class="section" style="border-top-color: #ef4444;">
-        <h3>3. Sniper (Target Settings)</h3>
-        <div class="grid">
-            <div>
-                <label>NFT Contract Address</label>
-                <input type="text" id="contractAddr" placeholder="0x...">
-                <label>Price (0 for Free)</label>
-                <input type="text" id="price" value="0">
-            </div>
-            <div>
-                <label>Time (YYYY-MM-DD HH:MM:SS)</label>
-                <input type="text" id="mintTime" placeholder="2026-03-20 21:55:00">
-                <button class="btn-attack" onclick="scheduleMint()">🔥 START ATTACK</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="log">>> Ready for Action...</div>
+    <div id="log">>> Sniper System Ready. No Alchemy needed...</div>
 </div>
 
 <script>
@@ -81,95 +83,89 @@
         logDiv.scrollTop = logDiv.scrollHeight;
     }
 
-    function getProvider() {
+    function initProvider() {
         const rpc = document.getElementById('rpcUrl').value;
-        return new ethers.providers.JsonRpcProvider(rpc);
+        provider = new ethers.providers.JsonRpcProvider(rpc);
     }
 
-    async function generateWallets() {
-        const count = prompt("How many wallets?", "5");
-        wallets = [];
-        let exportText = "";
-        for (let i = 0; i < count; i++) {
-            const w = ethers.Wallet.createRandom();
-            wallets.push(w.privateKey);
-            exportText += w.privateKey + "\n";
-        }
-        document.getElementById('importKeys').value = exportText;
-        log(`Generated ${count} new wallets.`);
-    }
-
-    function importWallets() {
-        const lines = document.getElementById('importKeys').value.split('\n');
-        wallets = lines.map(l => l.trim()).filter(l => l.length > 10);
-        log(`Loaded ${wallets.length} wallets successfully.`);
+    function loadWallets() {
+        const keys = document.getElementById('importKeys').value.split('\n');
+        wallets = keys.map(k => k.trim()).filter(k => k.length > 30);
+        log(`Loaded ${wallets.length} wallets. Ready for sniping.`);
     }
 
     async function distributeFunds() {
-        const masterKey = document.getElementById('masterKey').value;
+        initProvider();
+        const mKey = document.getElementById('masterKey').value;
         const amount = document.getElementById('fundAmount').value;
-        const p = getProvider();
-        
-        if(!masterKey || wallets.length === 0) return alert("Keys or Wallets missing!");
-        
-        const masterWallet = new ethers.Wallet(masterKey, p);
-        log("🚀 Starting Bulk Funding on Polygon...");
+        if(!mKey || wallets.length === 0) return alert("Keys missing!");
 
+        const master = new ethers.Wallet(mKey, provider);
+        log("🚀 Bulk Funding Started...");
+        
         for(let key of wallets) {
             try {
-                const tempWallet = new ethers.Wallet(key);
-                const tx = await masterWallet.sendTransaction({
-                    to: tempWallet.address,
+                const target = new ethers.Wallet(key).address;
+                const tx = await master.sendTransaction({
+                    to: target,
                     value: ethers.utils.parseEther(amount)
                 });
-                log(`Funded ${tempWallet.address.substring(0,8)} | Tx: ${tx.hash.substring(0,10)}`);
-                await tx.wait(); // Wait for confirmation on Polygon
+                log(`Sent to ${target.substring(0,8)} | Tx: ${tx.hash.substring(0,12)}`);
+                await tx.wait(); // Confirm before next
             } catch (e) { log(`Error: ${e.message}`, "#ef4444"); }
         }
-        log("✅ Distribution Finished!");
+        log("✅ Distribution Finished.");
     }
 
-    async function scheduleMint() {
+    async function startAttack() {
+        initProvider();
         const targetTimeStr = document.getElementById('mintTime').value;
         const contractAddr = document.getElementById('contractAddr').value;
         const price = document.getElementById('price').value;
+        const boost = document.getElementById('gasBoost').value;
         const targetTime = new Date(targetTimeStr).getTime();
-        const p = getProvider();
 
-        log(`Sniper Armed. Target: ${targetTimeStr}`, "#f59e0b");
+        if(isNaN(targetTime)) return alert("Invalid Time Format!");
+
+        log(`Sniper Armed! Target: ${targetTimeStr} (Boost: ${boost}%)`, "#f59e0b");
 
         const sniper = setInterval(async () => {
             if (Date.now() >= targetTime) {
                 clearInterval(sniper);
-                log("🔥 ATTACKING NOW!", "#ef4444");
+                log("🔥 TIME REACHED! ATTACKING BLOCKCHAIN...", "#ef4444");
 
-                // Polygon Gas Optimization (EIP-1559)
-                const feeData = await p.getFeeData();
-                // ২০% বাড়তি ফি যাতে অন্যদের আগে ট্রানজেকশন যায়
-                const maxFee = feeData.maxFeePerGas.mul(120).div(100); 
-                const priorityFee = feeData.maxPriorityFeePerGas.mul(150).div(100); 
+                // Smart Gas Boost
+                const feeData = await provider.getFeeData();
+                const multiplier = 100 + parseInt(boost);
+                const gasPrice = feeData.gasPrice.mul(multiplier).div(100);
 
-                const abi = ["function mint(uint256 quantity) public payable", "function claim(uint256 amount) public payable"];
+                // Multi-Function Support (ABI)
+                const abi = [
+                    "function mint(uint256 quantity) public payable",
+                    "function claim(uint256 amount) public payable",
+                    "function purchase(uint256 amount) public payable"
+                ];
 
                 wallets.forEach(async (key) => {
                     try {
-                        const signer = new ethers.Wallet(key, p);
+                        const signer = new ethers.Wallet(key, provider);
                         const contract = new ethers.Contract(contractAddr, abi, signer);
                         const val = (parseFloat(price) > 0) ? ethers.utils.parseEther(price) : 0;
 
+                        // Extreme Fast Execution
                         const tx = await contract.mint(1, {
                             value: val,
-                            maxFeePerGas: maxFee,
-                            maxPriorityFeePerGas: priorityFee,
-                            gasLimit: 250000
-                        });
-                        log(`✅ SUCCESS! Tx: ${tx.hash}`);
+                            gasLimit: 350000,
+                            gasPrice: gasPrice
+                        }).catch(() => contract.claim(1, { value: val, gasLimit: 350000, gasPrice: gasPrice }));
+
+                        log(`✅ SUCCESS! Tx: ${tx.hash}`, "#22c55e");
                     } catch (e) {
-                        log(`❌ Failed: ${e.message.substring(0,50)}...`, "#ef4444");
+                        log(`❌ Failed: ${e.message.substring(0,40)}...`, "#ef4444");
                     }
                 });
             }
-        }, 50);
+        }, 30); // 30ms check rate
     }
 </script>
 </body>
